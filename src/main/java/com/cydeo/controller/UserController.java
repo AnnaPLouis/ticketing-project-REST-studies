@@ -3,7 +3,10 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.ResponseWrapper;
 import com.cydeo.dto.UserDTO;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import javax.annotation.security.RolesAllowed;
 
 @RestController
 @RequestMapping("api/v1/user")
+@Tag(name = "UserController",description = "User API")
 public class UserController {
 
     private final UserService userService;
@@ -23,6 +27,7 @@ public class UserController {
 
     @GetMapping
     @RolesAllowed({"Manager", "Admin"})
+    @Operation(summary = "Get users")
     public ResponseEntity<ResponseWrapper> getUsers(){
 
         return ResponseEntity.ok(new ResponseWrapper("Users are retrieved",
@@ -31,6 +36,7 @@ public class UserController {
 
     @GetMapping("/{name}")
     @RolesAllowed("Admin")
+    @Operation(summary = "Get user by username")
     public ResponseEntity<ResponseWrapper> getUserByUserName(@PathVariable ("name") String name){
 
         return ResponseEntity.ok(new ResponseWrapper("Username " + name +"  is retrieved",
@@ -40,6 +46,7 @@ public class UserController {
 
     @PostMapping
     @RolesAllowed("Admin")
+    @Operation(summary = "Create user")
     public ResponseEntity<ResponseWrapper> createUser(@RequestBody UserDTO userDTO){
 
         userService.save(userDTO);
@@ -52,6 +59,7 @@ public class UserController {
 
     @PutMapping
     @RolesAllowed("Admin")
+    @Operation(summary = "Update user")
     public ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO){
 
         userService.update(userDTO);
@@ -63,7 +71,8 @@ public class UserController {
 
     @DeleteMapping("/{name}")
     @RolesAllowed("Admin")
-    public ResponseEntity<ResponseWrapper> deleteUser(@PathVariable ("name") String name){
+    @Operation(summary = "Delete user")
+    public ResponseEntity<ResponseWrapper> deleteUser(@PathVariable ("name") String name) throws TicketingProjectException {
 
         userService.delete(name);
 
